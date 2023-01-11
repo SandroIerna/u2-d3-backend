@@ -13,9 +13,21 @@ import {
 
 const server = express();
 
-const port = 3001;
+const port = process.env.PORT;
+const whitelist = [process.env.FE_DEV_URL];
+
+const corsOpts = {
+  origin: (origin, corsNext) => {
+    if (whitelist.indexOf(origin) !== -1) {
+      corsNext(null, true);
+    } else {
+      corsNext(`Origin ${origin} is not in the whitelist`);
+    }
+  },
+};
+
+server.use(cors(corsOpts));
 server.use(express.json());
-server.use(cors());
 
 // ******************* ENDPOINTS *********************
 
